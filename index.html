@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Quiz UE</title>
+<style>
+body{font-family:Arial;max-width:1000px;margin:auto;padding:20px}
+button{padding:12px;margin:5px;cursor:pointer}
+.answer{display:block;width:100%;margin:8px 0}
+.good{background:#c8f7c8}.bad{background:#ffc8c8}
+</style></head><body>
+<h1>Quiz UE</h1>
+<div id="app"></div>
+<script src="questions.js"></script>
+<script>
+let data=[],i=0,score=0,timer,time=1800;
+const sh=a=>[...a].sort(()=>Math.random()-0.5);
+menu();
+function menu(){
+document.getElementById('app').innerHTML=`
+<button onclick="exam()">Egzamin 50 pytań</button>
+<button onclick="learn()">Tryb nauki</button>
+<button onclick="bank()">Baza pytań</button>`;
+}
+function exam(){data=sh(questions).slice(0,50);i=0;score=0;show();}
+function learn(){data=questions;i=0;score=0;show();}
+function show(){
+let q=data[i],arr=sh(q.answers.map((a,n)=>({a,n})));
+let h=`<h3>${i+1}/${data.length}</h3><p>${q.question}</p>`;
+arr.forEach(x=>h+=`<button class='answer' onclick='ans(${x.n})'>${x.a}</button>`);
+h+="<div id='r'></div>";
+app.innerHTML=h;
+}
+function ans(n){
+let q=data[i],ok=n===q.correct;if(ok)score++;
+r.innerHTML=`<p>${ok?'✅':'❌'} Poprawna odpowiedź: ${q.answers[q.correct]}</p>
+<p><b>Uzasadnienie:</b><br>${q.explanation}</p>
+<button onclick='nextQ()'>Dalej</button>`;
+}
+function nextQ(){i++;if(i>=data.length){app.innerHTML=`<h2>Wynik ${score}/${data.length}</h2><button onclick='menu()'>Menu</button>`;}else show();}
+function bank(){
+let h="<h2>Baza pytań</h2>";
+questions.forEach((q,k)=>h+=`<hr><b>${k+1}. ${q.question}</b><br>✅ ${q.answers[q.correct]}<br>${q.explanation}`);
+app.innerHTML=h;
+}
+</script></body></html>
